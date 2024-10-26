@@ -135,9 +135,9 @@ impl Graph {
             }
 
             if unvisited.len() == 1 {
-                for v in unvisited.iter() {
-                    f.insert(v.clone(), 1);
-                }
+                let last_vertex = unvisited.iter().next().unwrap().clone();
+                f.insert(last_vertex.clone(), 1);
+                unvisited.remove(&last_vertex);
             }
         }
         f
@@ -166,8 +166,9 @@ impl Graph {
             }
 
             if unvisited.len() == 1 {
-                f.insert(u.clone(), 1);
-                unvisited.retain(|x| x != &u);
+                let last_vertex = unvisited[0].clone();
+                f.insert(last_vertex.clone(), 1);
+                unvisited.clear();
             }
         }
         f
