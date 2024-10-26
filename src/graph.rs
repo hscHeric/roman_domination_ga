@@ -89,18 +89,20 @@ impl Graph {
 
     pub fn is_roman_dominating_graph(&self) -> bool {
         for (k, v) in &self.adjacency_list {
-            if *self.get_label(k).unwrap() == 0 {
-                let mut found_adjacent_two = false;
-                for adj in v {
-                    if let Some(&label) = self.get_label(adj) {
-                        if label == 2 {
-                            found_adjacent_two = true;
-                            break; // Não precisamos verificar outros vizinhos, já achamos um 2
+            if let Some(&label) = self.get_label(k) {
+                if label == 0 {
+                    let mut found_adjacent_two = false;
+                    for adj in v {
+                        if let Some(&adj_label) = self.get_label(adj) {
+                            if adj_label == 2 {
+                                found_adjacent_two = true;
+                                break; // Não precisamos verificar outros vizinhos, já achamos um 2
+                            }
                         }
                     }
-                }
-                if !found_adjacent_two {
-                    return false; // Se não encontrou nenhum adjacente com rótulo 2
+                    if !found_adjacent_two {
+                        return false; // Se não encontrou nenhum adjacente com rótulo 2
+                    }
                 }
             }
         }
@@ -136,6 +138,36 @@ impl Graph {
                 for v in unvisited.iter() {
                     f.insert(v.clone(), 1);
                 }
+            }
+        }
+        f
+    }
+
+    pub fn procedure_h2(&self) -> HashMap<String, u8> {
+        let mut f: HashMap<String, u8> = HashMap::new();
+        let mut unvisited: Vec<String> = self.adjacency_list.keys().cloned().collect();
+
+        // Ordena o vetor de forma decrescente de acordo com o tamanho da vizinça
+        unvisited.sort_by_key(|vertex| {
+            std::cmp::Reverse(
+                self.adjacency_list
+                    .get(vertex)
+                    .map_or(0, |neighbors| neighbors.len()),
+            )
+        }); // Usei clousures, para ordenar o vetor de unvisited pelo grau de cada vértice
+
+        while !unvisited.is_empty() {
+            let u = unvisited.remove(0);
+            f.insert(u.clone(), 2); // f(u) = 2
+
+            for v in self.neighbors(&u) {
+                f.insert(v.clone(), 0);
+                unvisited.retain(|x| x != &v);
+            }
+
+            if unvisited.len() == 1 {
+                f.insert(u.clone(), 1);
+                unvisited.retain(|x| x != &u);
             }
         }
         f
