@@ -1,30 +1,21 @@
-use core::str;
-use std::{
-    collections::{HashMap, HashSet},
-    fs::File,
-    io::{self, BufRead},
-    path::Path,
-};
+use std::collections::{HashMap, HashSet};
 
 use rand::seq::IteratorRandom;
 
 #[derive(Debug)]
 pub struct Graph {
     adjacency_list: HashMap<String, Vec<String>>, // Lista de adjacências com nós como strings
-    labels: HashMap<String, u8>,                  // Rótulos numéricos (0, 1 ou 2)
 }
 
 impl Graph {
     pub fn new() -> Self {
         Graph {
             adjacency_list: HashMap::new(),
-            labels: HashMap::new(),
         }
     }
 
     pub fn add_vertex(&mut self, vertex: String) {
         self.adjacency_list.entry(vertex.clone()).or_default();
-        self.labels.insert(vertex, 0);
     }
 
     pub fn add_edge(&mut self, u: String, v: String) {
@@ -33,81 +24,6 @@ impl Graph {
             .or_insert(Vec::new())
             .push(v.clone());
         self.adjacency_list.entry(v).or_insert(Vec::new()).push(u);
-    }
-
-    pub fn set_label(&mut self, vertex: String, label: u8) {
-        if label > 2 {
-            panic!("Invalid label: must be 0, 1, or 2.");
-        }
-        self.labels.insert(vertex, label);
-    }
-
-    pub fn get_label(&self, vertex: &String) -> Option<&u8> {
-        self.labels.get(vertex)
-    }
-
-    pub fn display(&self) {
-        for (vertex, neighbors) in &self.adjacency_list {
-            let label = self.labels.get(vertex).unwrap();
-            println!(
-                "Vertex {}: Neighbors: {:?}, Label: {}",
-                vertex, neighbors, label
-            );
-        }
-    }
-
-    pub fn from_file(path: String) -> io::Result<Self> {
-        let mut g = Graph::new();
-        let path = Path::new(&path);
-        let file = File::open(path)?;
-        let reader = io::BufReader::new(file);
-
-        for line in reader.lines() {
-            let line_result = line?;
-            let line_result = line_result.trim();
-
-            if line_result.is_empty() {
-                continue;
-            }
-
-            let parts: Vec<&str> = line_result.split_whitespace().collect();
-            if parts.len() == 2 {
-                if let Ok(label) = parts[1].parse::<u8>() {
-                    let node = parts[0].to_string();
-                    g.add_vertex(node.clone());
-                    g.set_label(node, label);
-                } else {
-                    let u = parts[0].to_string();
-                    let v = parts[1].to_string();
-                    g.add_edge(u, v);
-                }
-            }
-        }
-
-        Ok(g)
-    }
-
-    pub fn is_roman_dominating_graph(&self) -> bool {
-        for (k, v) in &self.adjacency_list {
-            if let Some(&label) = self.get_label(k) {
-                if label == 0 {
-                    let mut found_adjacent_two = false;
-                    for adj in v {
-                        if let Some(&adj_label) = self.get_label(adj) {
-                            if adj_label == 2 {
-                                found_adjacent_two = true;
-                                break; // Não precisamos verificar outros vizinhos, já achamos um 2
-                            }
-                        }
-                    }
-                    if !found_adjacent_two {
-                        return false; // Se não encontrou nenhum adjacente com rótulo 2
-                    }
-                }
-            }
-        }
-
-        true // Se passou por todos os vértices sem problemas
     }
 
     pub fn neighbors(&self, vertex: &String) -> Vec<String> {
