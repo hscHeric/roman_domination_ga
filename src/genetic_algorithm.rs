@@ -3,15 +3,23 @@ use std::{
     vec,
 };
 
-use crate::{
-    graph::{self, Graph},
-    solution,
-};
+use rand::thread_rng;
+use rand::{seq::SliceRandom, Rng};
 
-#[derive(Debug)]
+use crate::graph::Graph;
+
 struct Solution {
     labels: Vec<u8>,
     fitness: Option<usize>,
+}
+
+impl Clone for Solution {
+    fn clone(&self) -> Self {
+        Self {
+            labels: self.labels.clone(),
+            fitness: self.fitness, // Option implementa a trait de copy
+        }
+    }
 }
 
 impl Solution {
@@ -132,5 +140,41 @@ impl RomanDominationGA {
             }
         }
         solution.fitness = None; // Reseta o fitness na solução
+    }
+
+    fn tournament_selection(
+        &mut self,
+        population: &mut Vec<Solution>,
+        tournament_size: usize,
+    ) -> Vec<Solution> {
+        let mut selected = Vec::with_capacity(population.len());
+        let mut rng = thread_rng();
+
+        // Primeiro, garantimos que todas as soluções têm fitness calculado
+        for solution in population.iter_mut() {
+            if solution.fitness.is_none() {
+                self.evaluate_fitness(solution);
+            }
+        }
+
+        while selected.len() < population.len() {
+            // Seleciona índices aleatórios para o torneio
+            let tournament_indices: Vec<usize> = (0..population.len())
+                .collect::<Vec<_>>()
+                .choose_multiple(&mut rng, tournament_size)
+                .cloned()
+                .collect();
+
+            // Encontra o melhor indivíduo do torneio
+            let winner_index = tournament_indices
+                .iter()
+                .min_by_key(|&&idx| population[idx].fitness.unwrap())
+                .unwrap();
+
+            // Clone apenas o vencedor
+            selected.push(population[*winner_index].clone());
+        }
+
+        selected
     }
 }
