@@ -17,6 +17,10 @@ impl Graph {
         Graph { adjacency_list }
     }
 
+    pub fn get_num_vertices(&self) -> usize {
+        self.adjacency_list.len()
+    }
+
     pub fn new_empty() -> Self {
         Graph {
             adjacency_list: Vec::new(),
