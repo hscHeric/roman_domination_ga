@@ -3,7 +3,10 @@ use std::{
     vec,
 };
 
-use crate::graph::{self, Graph};
+use crate::{
+    graph::{self, Graph},
+    solution,
+};
 
 #[derive(Debug)]
 struct Solution {
@@ -90,5 +93,44 @@ impl RomanDominationGA {
         };
 
         Solution::new(labels, fitness)
+    }
+
+    pub fn evaluate_fitness(&mut self, solution: &mut Solution) {
+        if solution.fitness.is_none() {
+            solution.fitness = Some(solution.labels.iter().map(|&x| x as usize).sum());
+        }
+        solution.fitness.unwrap();
+    }
+
+    fn is_feasible(&self, solution: &Solution) -> bool {
+        for vertex in 0..self.graph.get_num_vertices() {
+            if solution.labels[vertex] == 0 {
+                if !self
+                    .graph
+                    .get_neighbors(vertex)
+                    .iter()
+                    .any(|&neighbor| solution.labels[neighbor] == 2)
+                {
+                    return false;
+                }
+            }
+        }
+        true
+    }
+
+    fn make_feasible(&self, solution: &mut Solution) {
+        for vertex in 0..self.graph.get_num_vertices() {
+            if solution.labels[vertex] == 0 {
+                if !self
+                    .graph
+                    .get_neighbors(vertex)
+                    .iter()
+                    .any(|&neighbor| solution.labels[neighbor] == 2)
+                {
+                    solution.labels[vertex] = 1;
+                }
+            }
+        }
+        solution.fitness = None; // Reseta o fitness na solução
     }
 }
