@@ -1,4 +1,9 @@
-use std::cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd};
+use std::{
+    cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd},
+    vec,
+};
+
+use crate::graph::{self, Graph};
 
 #[derive(Debug)]
 struct Solution {
@@ -36,3 +41,54 @@ impl PartialEq for Solution {
 }
 
 impl Eq for Solution {}
+
+struct RomanDominationGA {
+    graph: Graph,
+    population_size: usize,
+}
+
+impl RomanDominationGA {
+    pub fn new(graph: Graph, population_size: Option<usize>) -> Self {
+        let population_size = population_size.unwrap_or(graph.get_num_vertices() / 2);
+        RomanDominationGA {
+            graph,
+            population_size,
+        }
+    }
+
+    pub fn generate_initial_population(&self) -> Vec<Solution> {
+        let mut population = vec![];
+
+        let h2_solution = self.generate_h2_solution();
+        population.push(h2_solution);
+
+        while population.len() < self.population_size {
+            let h1_solution = self.generate_h1_solution();
+            population.push(h1_solution);
+        }
+
+        population
+    }
+
+    fn generate_h2_solution(&self) -> Solution {
+        let labels = self.graph.h1();
+        let fitness = if labels.is_empty() {
+            None
+        } else {
+            Some(labels.iter().map(|&x| x as usize).sum())
+        };
+
+        Solution::new(labels, fitness)
+    }
+
+    fn generate_h1_solution(&self) -> Solution {
+        let labels = self.graph.h1();
+        let fitness = if labels.is_empty() {
+            None
+        } else {
+            Some(labels.iter().map(|&x| x as usize).sum())
+        };
+
+        Solution::new(labels, fitness)
+    }
+}
