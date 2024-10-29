@@ -186,7 +186,7 @@ impl RomanDominationGA {
             (indices[0], indices[1])
         };
 
-        let (r1, r2) = (r1.min(r2), r1.min(r1));
+        let (r1, r2) = (r1.min(r2), r1.max(r2));
         let mut child_labels = parent_a.labels.clone();
         child_labels[r1..r2].copy_from_slice(&parent_b.labels[r1..r2]);
         let mut child = Solution::new(child_labels, None);
@@ -207,6 +207,7 @@ impl RomanDominationGA {
         crossover_probability: f32,
     ) -> Solution {
         let mut population: Vec<Solution> = self.generate_initial_population();
+
         population.iter_mut().for_each(|solution| {
             self.evaluate_fitness(solution);
         }); // Garante que todos os fitness foram calculados
