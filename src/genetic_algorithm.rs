@@ -82,7 +82,7 @@ impl RomanDominationGA {
     }
 
     fn generate_h2_solution(&self) -> Solution {
-        let labels = self.graph.h1();
+        let labels = self.graph.h2();
         let fitness = if labels.is_empty() {
             None
         } else {
