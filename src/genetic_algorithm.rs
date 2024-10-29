@@ -67,27 +67,6 @@ impl RomanDominationGA {
         }
     }
 
-    pub fn print_population(&self, population: &Vec<Solution>) {
-        for (i, solution) in population.iter().enumerate() {
-            let labels_str: String = solution
-                .labels
-                .iter()
-                .map(|x| x.to_string())
-                .collect::<Vec<_>>()
-                .join(", ");
-            let fitness_str = match solution.fitness {
-                Some(f) => f.to_string(),
-                None => "None".to_string(),
-            };
-            println!(
-                "Indivíduo {}: Rótulos: [{}], Fitness: {}",
-                i + 1,
-                labels_str,
-                fitness_str
-            );
-        }
-    }
-
     fn generate_initial_population(&self) -> Vec<Solution> {
         let mut population = vec![];
 
@@ -227,14 +206,11 @@ impl RomanDominationGA {
         crossover_probability: f32,
     ) -> Solution {
         let mut population: Vec<Solution> = self.generate_initial_population();
-        self.print_population(&population);
 
-        // Avalia o fitness de todas as soluções na população inicial
         for solution in &mut population {
             self.evaluate_fitness(solution);
         }
 
-        // Verifica se todas as soluções têm fitness calculado
         if population.iter().any(|s| s.fitness.is_none()) {
             eprintln!("Erro: Existem soluções sem fitness calculado na população inicial.");
             return Solution::new(vec![], None); // Retorne uma solução vazia ou trate conforme necessário
