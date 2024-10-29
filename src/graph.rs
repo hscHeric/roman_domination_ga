@@ -44,8 +44,10 @@ impl Graph {
             unvisited.remove(&u);
 
             for &v in self.get_neighbors(u) {
-                f[v] = 0;
-                unvisited.remove(&v);
+                if unvisited.contains(&v) {
+                    f[v] = 0;
+                    unvisited.remove(&v);
+                }
             }
 
             if unvisited.len() == 1 {
@@ -56,12 +58,10 @@ impl Graph {
         }
         f
     }
-
     pub fn h2(&self) -> Vec<u8> {
         let mut f: Vec<u8> = vec![0; self.adjacency_list.len()];
         let mut unvisited: Vec<usize> = (0..self.adjacency_list.len()).collect();
 
-        // Ordena por grau decrescente
         unvisited.sort_by_key(|&vertex| std::cmp::Reverse(self.get_vertex_degree(vertex)));
 
         while !unvisited.is_empty() {
@@ -69,8 +69,10 @@ impl Graph {
             f[u] = 2;
 
             for &v in self.get_neighbors(u) {
-                f[v] = 0;
-                unvisited.retain(|&x| x != v);
+                if let Some(pos) = unvisited.iter().position(|&x| x == v) {
+                    f[v] = 0;
+                    unvisited.remove(pos);
+                }
             }
 
             if unvisited.len() == 1 {
