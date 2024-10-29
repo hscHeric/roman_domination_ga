@@ -25,12 +25,6 @@ impl Graph {
         self.adjacency_list.len()
     }
 
-    pub fn new_empty() -> Self {
-        Graph {
-            adjacency_list: Vec::new(),
-        }
-    }
-
     pub fn get_neighbors(&self, vertex: usize) -> &Vec<usize> {
         &self.adjacency_list[vertex]
     }
