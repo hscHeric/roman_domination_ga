@@ -10,7 +10,7 @@ use crate::graph::Graph;
 
 pub struct Solution {
     labels: Vec<u8>,
-    fitness: Option<usize>,
+    pub fitness: Option<usize>,
 }
 
 impl Clone for Solution {
@@ -64,6 +64,27 @@ impl RomanDominationGA {
         RomanDominationGA {
             graph,
             population_size,
+        }
+    }
+
+    pub fn print_population(&self, population: &Vec<Solution>) {
+        for (i, solution) in population.iter().enumerate() {
+            let labels_str: String = solution
+                .labels
+                .iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<_>>()
+                .join(", ");
+            let fitness_str = match solution.fitness {
+                Some(f) => f.to_string(),
+                None => "None".to_string(),
+            };
+            println!(
+                "Indivíduo {}: Rótulos: [{}], Fitness: {}",
+                i + 1,
+                labels_str,
+                fitness_str
+            );
         }
     }
 
@@ -198,7 +219,6 @@ impl RomanDominationGA {
 
         child
     }
-
     pub fn run(
         &mut self,
         max_generations: usize,
@@ -207,19 +227,27 @@ impl RomanDominationGA {
         crossover_probability: f32,
     ) -> Solution {
         let mut population: Vec<Solution> = self.generate_initial_population();
+        self.print_population(&population);
 
-        population.iter_mut().for_each(|solution| {
+        // Avalia o fitness de todas as soluções na população inicial
+        for solution in &mut population {
             self.evaluate_fitness(solution);
-        }); // Garante que todos os fitness foram calculados
+        }
 
+        // Verifica se todas as soluções têm fitness calculado
+        if population.iter().any(|s| s.fitness.is_none()) {
+            eprintln!("Erro: Existem soluções sem fitness calculado na população inicial.");
+            return Solution::new(vec![], None); // Retorne uma solução vazia ou trate conforme necessário
+        }
+
+        // Encontre a melhor solução inicial
         let mut best_solution = population
             .iter()
             .min_by_key(|s| s.fitness.unwrap())
             .unwrap()
             .clone();
 
-        let mut stagnant_generations = 0; //Guarda o númeor de gerações sem que o fitness seja
-                                          //alterador
+        let mut stagnant_generations = 0;
 
         for _ in 0..max_generations {
             if stagnant_generations >= max_stagnant {
@@ -230,23 +258,44 @@ impl RomanDominationGA {
             let mut new_pop = Vec::with_capacity(population.len());
 
             for i in (0..intermediate_pop.len()).step_by(2) {
+                // Avalia o fitness antes de aplicar crossover
+                if i < intermediate_pop.len() {
+                    let mut solution_clone = intermediate_pop[i].clone();
+                    self.evaluate_fitness(&mut solution_clone);
+                    new_pop.push(solution_clone);
+                }
+
+                if i + 1 < intermediate_pop.len() {
+                    let mut solution_clone_2 = intermediate_pop[i + 1].clone();
+                    self.evaluate_fitness(&mut solution_clone_2);
+                    new_pop.push(solution_clone_2);
+                }
+
+                // Realiza crossover com base na probabilidade
                 if rand::random::<f32>() < crossover_probability {
                     if i + 1 < intermediate_pop.len() {
-                        let child = self.crossover(&intermediate_pop[i], &intermediate_pop[i + 1]);
+                        let mut child =
+                            self.crossover(&intermediate_pop[i], &intermediate_pop[i + 1]);
+                        self.evaluate_fitness(&mut child);
                         new_pop.push(child);
-                    }
-                } else {
-                    new_pop.push(intermediate_pop[i].clone());
-                    if i + 1 < intermediate_pop.len() {
-                        new_pop.push(intermediate_pop[i + 1].clone());
                     }
                 }
             }
-            population = new_pop;
-            population.iter_mut().for_each(|solution| {
-                self.evaluate_fitness(solution);
-            });
 
+            population = new_pop;
+
+            // Avalia o fitness de todas as soluções na nova população
+            for solution in &mut population {
+                self.evaluate_fitness(solution);
+            }
+
+            // Verifica se todas as soluções têm fitness calculado
+            if population.iter().any(|s| s.fitness.is_none()) {
+                eprintln!("Erro: Existem soluções sem fitness calculado na nova população.");
+                return Solution::new(vec![], None); // Retorne uma solução vazia ou trate conforme necessário
+            }
+
+            // Encontre a melhor solução na nova população
             let current_best = population
                 .iter()
                 .min_by_key(|s| s.fitness.unwrap())
