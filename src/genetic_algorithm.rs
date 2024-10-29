@@ -8,7 +8,7 @@ use rand::thread_rng;
 
 use crate::graph::Graph;
 
-struct Solution {
+pub struct Solution {
     labels: Vec<u8>,
     fitness: Option<usize>,
 }
@@ -53,7 +53,7 @@ impl PartialEq for Solution {
 
 impl Eq for Solution {}
 
-struct RomanDominationGA {
+pub struct RomanDominationGA {
     graph: Graph,
     population_size: usize,
 }

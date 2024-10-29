@@ -1,4 +1,8 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::HashSet,
+    fs::File,
+    io::{self, BufRead},
+};
 
 use rand::seq::IteratorRandom;
 
@@ -82,5 +86,28 @@ impl Graph {
             }
         }
         f
+    }
+
+    pub fn from_file(file_path: String) -> io::Result<Self> {
+        let file = File::open(&file_path)?;
+        let reader = io::BufReader::new(file);
+        let mut edges: Vec<(usize, usize)> = Vec::new();
+        let mut num_vertices = 0;
+
+        for line in reader.lines() {
+            let line = line?;
+            let vertices: Vec<usize> = line
+                .split_whitespace()
+                .filter_map(|s| s.parse::<usize>().ok())
+                .collect();
+
+            if vertices.len() == 2 {
+                let (u, v) = (vertices[0], vertices[1]);
+                edges.push((u, v));
+                num_vertices = num_vertices.max(u + 1).max(v + 1);
+            }
+        }
+
+        Ok(Graph::new(num_vertices, &edges))
     }
 }
