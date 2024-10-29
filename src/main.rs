@@ -5,7 +5,7 @@ mod genetic_algorithm;
 mod graph;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let file_path = "/data/edges/pores_1_edges.txt".to_string();
+    let file_path = "./data/edges/pores_1_edges.txt".to_string();
 
     // Tenta criar um grafo a partir do arquivo
     let graph = Graph::from_file(file_path)?;
