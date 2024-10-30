@@ -112,15 +112,14 @@ impl RomanDominationGA {
 
     fn is_feasible(&self, solution: &Solution) -> bool {
         for vertex in 0..self.graph.get_num_vertices() {
-            if solution.labels[vertex] == 0 {
-                if !self
+            if solution.labels[vertex] == 0
+                && !self
                     .graph
                     .get_neighbors(vertex)
                     .iter()
                     .any(|&neighbor| solution.labels[neighbor] == 2)
-                {
-                    return false;
-                }
+            {
+                return false;
             }
         }
         true
@@ -128,15 +127,14 @@ impl RomanDominationGA {
 
     fn make_feasible(&self, solution: &mut Solution) {
         for vertex in 0..self.graph.get_num_vertices() {
-            if solution.labels[vertex] == 0 {
-                if !self
+            if solution.labels[vertex] == 0
+                && !self
                     .graph
                     .get_neighbors(vertex)
                     .iter()
                     .any(|&neighbor| solution.labels[neighbor] == 2)
-                {
-                    solution.labels[vertex] = 1;
-                }
+            {
+                solution.labels[vertex] = 1;
             }
         }
         solution.fitness = None; // Reseta o fitness na solução
@@ -144,8 +142,8 @@ impl RomanDominationGA {
 
     fn tournament_selection(
         &mut self,
-        population: &mut Vec<Solution>,
         tournament_size: usize,
+        population: &mut Vec<Solution>,
     ) -> Vec<Solution> {
         let mut selected = Vec::with_capacity(population.len());
         let mut rng = thread_rng();
@@ -226,11 +224,12 @@ impl RomanDominationGA {
         let mut stagnant_generations = 0;
 
         for _ in 0..max_generations {
+            //   println!("{} de {}", i, max_generations);
             if stagnant_generations >= max_stagnant {
                 break;
             }
 
-            let intermediate_pop = self.tournament_selection(&mut population, tournament_size);
+            let intermediate_pop = self.tournament_selection(tournament_size, &mut population);
             let mut new_pop = Vec::with_capacity(population.len());
 
             for i in (0..intermediate_pop.len()).step_by(2) {
@@ -248,13 +247,10 @@ impl RomanDominationGA {
                 }
 
                 // Realiza crossover com base na probabilidade
-                if rand::random::<f32>() < crossover_probability {
-                    if i + 1 < intermediate_pop.len() {
-                        let mut child =
-                            self.crossover(&intermediate_pop[i], &intermediate_pop[i + 1]);
-                        self.evaluate_fitness(&mut child);
-                        new_pop.push(child);
-                    }
+                if rand::random::<f32>() < crossover_probability && i + 1 < intermediate_pop.len() {
+                    let mut child = self.crossover(&intermediate_pop[i], &intermediate_pop[i + 1]);
+                    self.evaluate_fitness(&mut child);
+                    new_pop.push(child);
                 }
             }
 
