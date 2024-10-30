@@ -26,7 +26,7 @@ for filename in os.listdir(input_directory):
         print(G)
 
         # Nome do arquivo de saída para a lista de arestas
-        output_file = os.path.join(output_directory, f'{os.path.splitext(filename)[0]}_edges.txt')
+        output_file = os.path.join(output_directory, f'{os.path.splitext(filename)[0]}.txt')
 
         # Salvar o grafo em um arquivo como lista de arestas
         nx.write_edgelist(G, output_file, data=False)  # 'data=False' exclui atributos de arestas
