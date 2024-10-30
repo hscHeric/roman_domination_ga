@@ -106,4 +106,12 @@ impl Graph {
 
         Ok(Graph::new(num_vertices, &edges))
     }
+
+    pub fn get_graph_size(&self) -> usize {
+        let mut edge_count = 0;
+        for v in &self.adjacency_list {
+            edge_count += v.len();
+        }
+        edge_count / 2
+    }
 }
