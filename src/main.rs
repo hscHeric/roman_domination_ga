@@ -19,8 +19,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let file_path = args[1].clone();
 
-    const MAX_STAGNANT: usize = 10;
-    const GENERATIONS: usize = 100;
+    const MAX_STAGNANT: usize = 100;
+    const GENERATIONS: usize = 1000;
     const TOURNAMENT_SIZE: usize = 2;
     const CROSSOVER_PROBABILITY: f32 = 0.9;
     let file_name = Path::new(&file_path)
