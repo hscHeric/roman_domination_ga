@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+mcca,180,1860,81,23596
+mcca,180,1860,81,14204
+mcca,180,1860,77,17891
+mcca,180,1860,78,18938
+mcca,180,1860,82,14100
+mcca,180,1860,79,15716
+mcca,180,1860,81,14494
+mcca,180,1860,80,18419
+mcca,180,1860,80,18417
+mcca,180,1860,82,15636

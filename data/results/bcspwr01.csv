@@ -1,0 +1,13 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+bcspwr01,39,85,29,650
+bcspwr01,39,85,29,663
+bcspwr01,39,85,29,422
+bcspwr01,39,85,27,306
+bcspwr01,39,85,28,396
+bcspwr01,39,85,29,319
+bcspwr01,39,85,29,284
+bcspwr01,39,85,28,349
+bcspwr01,39,85,29,291
+bcspwr01,39,85,29,287

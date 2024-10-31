@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+bcsstk05,153,1288,33,8677
+bcsstk05,153,1288,33,11983
+bcsstk05,153,1288,35,8169
+bcsstk05,153,1288,37,4228
+bcsstk05,153,1288,37,4244
+bcsstk05,153,1288,38,5711
+bcsstk05,153,1288,34,7017
+bcsstk05,153,1288,36,7363
+bcsstk05,153,1288,35,4272
+bcsstk05,153,1288,36,6473

@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+can_62,62,140,46,1245
+can_62,62,140,44,994
+can_62,62,140,46,972
+can_62,62,140,47,704
+can_62,62,140,45,1170
+can_62,62,140,45,881
+can_62,62,140,48,865
+can_62,62,140,44,1023
+can_62,62,140,44,909
+can_62,62,140,42,886

@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+steam1,240,2001,48,26388
+steam1,240,2001,48,11561
+steam1,240,2001,48,11098
+steam1,240,2001,44,10477
+steam1,240,2001,48,10243
+steam1,240,2001,48,10522
+steam1,240,2001,50,10244
+steam1,240,2001,46,10178
+steam1,240,2001,48,10168
+steam1,240,2001,46,10265

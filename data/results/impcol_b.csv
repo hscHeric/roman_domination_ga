@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+impcol_b,59,298,23,2070
+impcol_b,59,298,23,2103
+impcol_b,59,298,23,1968
+impcol_b,59,298,21,1934
+impcol_b,59,298,25,2417
+impcol_b,59,298,24,2565
+impcol_b,59,298,23,1654
+impcol_b,59,298,25,2193
+impcol_b,59,298,27,1688
+impcol_b,59,298,25,1663

@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+steam3,80,504,14,3544
+steam3,80,504,14,3713
+steam3,80,504,16,3034
+steam3,80,504,16,2720
+steam3,80,504,16,2211
+steam3,80,504,16,1267
+steam3,80,504,14,1064
+steam3,80,504,16,1085
+steam3,80,504,16,1151
+steam3,80,504,16,983

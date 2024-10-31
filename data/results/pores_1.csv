@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+pores_1,30,133,10,227
+pores_1,30,133,10,202
+pores_1,30,133,10,199
+pores_1,30,133,10,198
+pores_1,30,133,10,243
+pores_1,30,133,10,196
+pores_1,30,133,10,183
+pores_1,30,133,10,192
+pores_1,30,133,8,202
+pores_1,30,133,10,186

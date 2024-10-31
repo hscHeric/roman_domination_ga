@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+dwt_66,66,193,34,934
+dwt_66,66,193,32,910
+dwt_66,66,193,33,851
+dwt_66,66,193,33,1177
+dwt_66,66,193,33,945
+dwt_66,66,193,34,1128
+dwt_66,66,193,33,1002
+dwt_66,66,193,31,934
+dwt_66,66,193,33,857
+dwt_66,66,193,31,950

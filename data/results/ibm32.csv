@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+ibm32,32,122,15,345
+ibm32,32,122,15,252
+ibm32,32,122,15,290
+ibm32,32,122,15,232
+ibm32,32,122,15,219
+ibm32,32,122,13,230
+ibm32,32,122,15,302
+ibm32,32,122,15,254
+ibm32,32,122,15,238
+ibm32,32,122,15,239

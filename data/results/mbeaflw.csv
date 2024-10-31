@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+mbeaflw,492,42090,13,132128
+mbeaflw,492,42090,13,150170
+mbeaflw,492,42090,13,120280
+mbeaflw,492,42090,12,244935
+mbeaflw,492,42090,13,164619
+mbeaflw,492,42090,13,154718
+mbeaflw,492,42090,13,163362
+mbeaflw,492,42090,13,150621
+mbeaflw,492,42090,13,143019
+mbeaflw,492,42090,13,148061

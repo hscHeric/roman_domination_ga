@@ -1,0 +1,11 @@
+graph_name,graph_order,graph_size,fitness_value,elapsed_time(microsecond)
+jagmesh1,936,3600,405,485293
+jagmesh1,936,3600,414,346712
+jagmesh1,936,3600,411,436383
+jagmesh1,936,3600,400,591311
+jagmesh1,936,3600,415,375256
+jagmesh1,936,3600,411,376807
+jagmesh1,936,3600,422,216196
+jagmesh1,936,3600,423,193266
+jagmesh1,936,3600,410,330073
+jagmesh1,936,3600,415,441730
