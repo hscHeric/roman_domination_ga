@@ -11,12 +11,14 @@ use crate::graph::Graph;
 pub struct Solution {
     labels: Vec<u8>,
     pub fitness: Option<usize>,
+    modified: bool,
 }
 
 impl Clone for Solution {
     fn clone(&self) -> Self {
         Self {
             labels: self.labels.clone(),
+            modified: true,
             fitness: self.fitness, // Option implementa a trait de copy
         }
     }
@@ -24,7 +26,11 @@ impl Clone for Solution {
 
 impl Solution {
     fn new(labels: Vec<u8>, fitness: Option<usize>) -> Self {
-        Solution { labels, fitness }
+        Solution {
+            labels,
+            fitness,
+            modified: true,
+        }
     }
 }
 
@@ -104,9 +110,16 @@ impl RomanDominationGA {
     }
 
     fn evaluate_fitness(&self, solution: &mut Solution) -> usize {
-        if solution.fitness.is_none() {
-            solution.fitness = Some(solution.labels.iter().map(|&x| x as usize).sum());
+        if solution.modified || solution.fitness.is_none() {
+            if !self.is_feasible(solution) {
+                self.make_feasible(solution);
+            }
+
+            let new_fitness = solution.labels.iter().map(|&x| x as usize).sum();
+            solution.fitness = Some(new_fitness);
+            solution.modified = false;
         }
+
         solution.fitness.unwrap()
     }
 
@@ -126,6 +139,8 @@ impl RomanDominationGA {
     }
 
     fn make_feasible(&self, solution: &mut Solution) {
+        let mut was_modified = false;
+
         for vertex in 0..self.graph.get_num_vertices() {
             if solution.labels[vertex] == 0
                 && !self
@@ -135,9 +150,14 @@ impl RomanDominationGA {
                     .any(|&neighbor| solution.labels[neighbor] == 2)
             {
                 solution.labels[vertex] = 1;
+                was_modified = true;
             }
         }
-        solution.fitness = None; // Reseta o fitness na solução
+
+        if was_modified {
+            solution.modified = true;
+            solution.fitness = None;
+        }
     }
 
     fn tournament_selection(
@@ -148,28 +168,25 @@ impl RomanDominationGA {
         let mut selected = Vec::with_capacity(population.len());
         let mut rng = thread_rng();
 
-        // Primeiro, garantimos que todas as soluções têm fitness calculado
         for solution in population.iter_mut() {
-            if solution.fitness.is_none() {
+            if solution.modified || solution.fitness.is_none() {
                 self.evaluate_fitness(solution);
             }
         }
 
         while selected.len() < population.len() {
-            // Seleciona índices aleatórios para o torneio
             let tournament_indices: Vec<usize> = (0..population.len())
                 .collect::<Vec<_>>()
                 .choose_multiple(&mut rng, tournament_size)
                 .cloned()
                 .collect();
 
-            // Encontra o melhor indivíduo do torneio
             let winner_index = tournament_indices
                 .iter()
                 .min_by_key(|&&idx| population[idx].fitness.unwrap())
                 .unwrap();
 
-            // Clone apenas o vencedor
+            // Clone marca automaticamente como modified
             selected.push(population[*winner_index].clone());
         }
 
@@ -187,15 +204,10 @@ impl RomanDominationGA {
         let (r1, r2) = (r1.min(r2), r1.max(r2));
         let mut child_labels = parent_a.labels.clone();
         child_labels[r1..r2].copy_from_slice(&parent_b.labels[r1..r2]);
-        let mut child = Solution::new(child_labels, None);
-        self.evaluate_fitness(&mut child);
 
-        if !self.is_feasible(&child) {
-            self.make_feasible(&mut child);
-        }
-
-        child
+        Solution::new(child_labels, None)
     }
+
     pub fn run(
         &mut self,
         max_generations: usize,
@@ -209,12 +221,6 @@ impl RomanDominationGA {
             self.evaluate_fitness(solution);
         }
 
-        if population.iter().any(|s| s.fitness.is_none()) {
-            eprintln!("Erro: Existem soluções sem fitness calculado na população inicial.");
-            return Solution::new(vec![], None); // Retorne uma solução vazia ou trate conforme necessário
-        }
-
-        // Encontre a melhor solução inicial
         let mut best_solution = population
             .iter()
             .min_by_key(|s| s.fitness.unwrap())
@@ -222,65 +228,61 @@ impl RomanDominationGA {
             .clone();
 
         let mut stagnant_generations = 0;
+        let mut generation = 0;
 
-        for _ in 0..max_generations {
-            //   println!("{} de {}", i, max_generations);
-            if stagnant_generations >= max_stagnant {
-                break;
-            }
-
+        while generation < max_generations && stagnant_generations < max_stagnant {
             let intermediate_pop = self.tournament_selection(tournament_size, &mut population);
-            let mut new_pop = Vec::with_capacity(population.len());
+            let mut new_population = Vec::with_capacity(self.population_size);
 
             for i in (0..intermediate_pop.len()).step_by(2) {
-                // Avalia o fitness antes de aplicar crossover
-                if i < intermediate_pop.len() {
-                    let mut solution_clone = intermediate_pop[i].clone();
-                    self.evaluate_fitness(&mut solution_clone);
-                    new_pop.push(solution_clone);
-                }
+                new_population.push(intermediate_pop[i].clone());
 
                 if i + 1 < intermediate_pop.len() {
-                    let mut solution_clone_2 = intermediate_pop[i + 1].clone();
-                    self.evaluate_fitness(&mut solution_clone_2);
-                    new_pop.push(solution_clone_2);
+                    new_population.push(intermediate_pop[i + 1].clone());
+
+                    if rand::random::<f32>() < crossover_probability {
+                        let mut child =
+                            self.crossover(&intermediate_pop[i], &intermediate_pop[i + 1]);
+                        self.evaluate_fitness(&mut child);
+                        if new_population.len() < self.population_size {
+                            new_population.push(child);
+                        }
+                    }
                 }
 
-                // Realiza crossover com base na probabilidade
-                if rand::random::<f32>() < crossover_probability && i + 1 < intermediate_pop.len() {
-                    let mut child = self.crossover(&intermediate_pop[i], &intermediate_pop[i + 1]);
-                    self.evaluate_fitness(&mut child);
-                    new_pop.push(child);
+                if new_population.len() >= self.population_size {
+                    new_population.truncate(self.population_size);
+                    break;
                 }
             }
 
-            population = new_pop;
-
-            // Avalia o fitness de todas as soluções na nova população
-            for solution in &mut population {
-                self.evaluate_fitness(solution);
+            for solution in &mut new_population {
+                if solution.modified || solution.fitness.is_none() {
+                    self.evaluate_fitness(solution);
+                }
             }
 
-            // Verifica se todas as soluções têm fitness calculado
-            if population.iter().any(|s| s.fitness.is_none()) {
-                eprintln!("Erro: Existem soluções sem fitness calculado na nova população.");
-                return Solution::new(vec![], None); // Retorne uma solução vazia ou trate conforme necessário
-            }
+            population = new_population;
 
-            // Encontre a melhor solução na nova população
             let current_best = population
                 .iter()
+                .inspect(|s| {
+                    if s.fitness.is_none() {
+                        println!("Warning: Found solution without fitness!");
+                    }
+                })
                 .min_by_key(|s| s.fitness.unwrap())
                 .unwrap()
                 .clone();
 
-            // Atualiza a melhor solução encontrada e verifica estagnação
             if current_best.fitness < best_solution.fitness {
                 best_solution = current_best;
-                stagnant_generations = 0; // Reseta estagnação
+                stagnant_generations = 0;
             } else {
                 stagnant_generations += 1;
             }
+
+            generation += 1;
         }
 
         best_solution
