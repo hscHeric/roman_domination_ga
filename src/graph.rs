@@ -33,17 +33,6 @@ impl Graph {
     pub fn get_vertex_degree(&self, vertex: usize) -> usize {
         self.adjacency_list[vertex].len()
     }
-    pub fn del_vertex(&mut self, v: usize) {
-        if self.get_num_vertices() > v && self.get_vertex_degree(v) > 0 {
-            let neighbors = self.get_neighbors(v).clone();
-            for neighbor in neighbors {
-                if let Some(pos) = self.adjacency_list[neighbor].iter().position(|&x| x == v) {
-                    self.adjacency_list[neighbor].remove(pos);
-                }
-            }
-            self.adjacency_list[v] = vec![]; // Limpa a lista de adjacência do vértice
-        }
-    }
 
     pub fn add_vertex(&mut self, v: usize) {
         while self.adjacency_list.len() <= v {
