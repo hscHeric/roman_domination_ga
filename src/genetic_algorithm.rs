@@ -1,7 +1,4 @@
-use std::{
-    cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd},
-    vec,
-};
+use std::cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd};
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -76,6 +73,12 @@ impl RomanDominationGA {
     fn generate_initial_population(&self) -> Vec<Solution> {
         let mut population = vec![];
 
+        let h4_solution = self.generate_h4_solution();
+        population.push(h4_solution);
+
+        let h3_solution = self.generate_h3_solution();
+        population.push(h3_solution);
+
         let h2_solution = self.generate_h2_solution();
         population.push(h2_solution);
 
@@ -100,6 +103,28 @@ impl RomanDominationGA {
 
     fn generate_h1_solution(&self) -> Solution {
         let labels = self.graph.h1();
+        let fitness = if labels.is_empty() {
+            None
+        } else {
+            Some(labels.iter().map(|&x| x as usize).sum())
+        };
+
+        Solution::new(labels, fitness)
+    }
+
+    fn generate_h3_solution(&self) -> Solution {
+        let labels = self.graph.h3();
+        let fitness = if labels.is_empty() {
+            None
+        } else {
+            Some(labels.iter().map(|&x| x as usize).sum())
+        };
+
+        Solution::new(labels, fitness)
+    }
+
+    fn generate_h4_solution(&self) -> Solution {
+        let labels = self.graph.h4();
         let fitness = if labels.is_empty() {
             None
         } else {
