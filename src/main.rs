@@ -21,7 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     const MAX_STAGNANT: usize = 100;
     const GENERATIONS: usize = 1000;
-    const TOURNAMENT_SIZE: usize = 2;
+    const TOURNMENT_SIZE: usize = 2;
     const CROSSOVER_PROBABILITY: f32 = 0.9;
     let file_name = Path::new(&file_path)
         .file_stem()
@@ -50,7 +50,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let solution = rdga.run(
             GENERATIONS,
             MAX_STAGNANT,
-            TOURNAMENT_SIZE,
+            TOURNMENT_SIZE,
             CROSSOVER_PROBABILITY,
         );
         let end = Instant::now();
