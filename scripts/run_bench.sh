@@ -4,14 +4,13 @@
 INPUT_DIR="./data/edges"
 OUTPUT_DIR="./data/results"
 
-# Número de execuções (trials) para cada arquivo
-TRIALS=$1
-
-# Verifica se o número de execuções foi fornecido
-if [ -z "$TRIALS" ]; then
-  echo "Uso: ./scripts/run_bench.sh numero_de_trials"
-  exit 1
-fi
+# Parâmetros do algoritmo genético
+TRIALS=30 # Número de execuções para cada arquivo
+MAX_STAGNANT=100
+GENERATIONS=1000
+TOURNAMENT_SIZE=2
+CROSSOVER_PROB=0.9
+# POP_SIZE será calculado automaticamente se não for especificado
 
 # Cria o diretório de saída se ele não existir
 mkdir -p "$OUTPUT_DIR"
@@ -41,8 +40,7 @@ for file in $sorted_files; do
 
   # Executa o programa e redireciona a saída para o arquivo CSV
   echo "Executando benchmark para $file..."
-  ./target/release/roman_domination_ga "$file" "$TRIALS" >>"$output_file"
-
+  ./target/release/roman_domination_ga "$file" "$TRIALS" "$MAX_STAGNANT" "$GENERATIONS" "$TOURNAMENT_SIZE" "$CROSSOVER_PROB" >>"$output_file"
   echo "Resultados salvos em $output_file"
 done
 
