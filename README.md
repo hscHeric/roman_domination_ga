@@ -1,4 +1,4 @@
-# Roman Domination Genetic Algorithm (RD-GA)
+# CL-Roman Domination Genetic Algorithm (CLRD-GA)
 
 Este projeto implementa um Algoritmo Genético (AG) para resolver o **Problema de Dominação Romana em Grafos** (PDR). O objetivo do PDR é determinar a **função de dominação romana** de menor peso para um grafo, um problema conhecido por ser **NP-completo**.
 
