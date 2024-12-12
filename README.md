@@ -4,13 +4,13 @@ Este projeto implementa um Algoritmo Genético (AG) para resolver o **Problema d
 
 ## 🧪 Sobre o Problema
 
-Dado um grafo \( G = (V, E) \), uma função \( f : V \to \{0, 1, 2\} \) é chamada de **Função de Dominação Romana (FDR)** se, para todo vértice \( v \in V \) tal que \( f(v) = 0 \), existe ao menos um vizinho \( w \in V \) com \( f(w) = 2 \). O **peso** da função \( f \) é dado por:
+Dado um grafo $ G = (V, E) $, uma função $ f : V \to \{0, 1, 2\} $ é chamada de **Função de Dominação Romana (FDR)** se, para todo vértice $ v \in V $ tal que $ f(v) = 0 $, existe ao menos um vizinho $ w \in V $ com $ f(w) = 2 $. O **peso** da função $ f $ é dado por:
 
 \[
 \omega(f) = \sum_{v \in V} f(v)
 \]
 
-O **Número de Dominação Romana** \( \gamma_R(G) \) corresponde ao menor peso entre todas as FDRs possíveis para \( G \).
+O **Número de Dominação Romana** $ \gamma_R(G) $ corresponde ao menor peso entre todas as FDRs possíveis para $ G $.
 
 Este projeto implementa melhorias no algoritmo genético proposto por **Khandelwal et al. (2021)**, alcançando ganhos significativos em eficiência e qualidade das soluções.
 
